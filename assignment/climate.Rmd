@@ -1,6 +1,6 @@
 ---
 title: "Climate Exercise"
-author: "Carl Boettiger & Dana Seidel"
+author: "Parker Winig"
 output: github_document
 ---
 
@@ -54,16 +54,36 @@ Describe the data set to the best of your ability given the documentation provid
 - What is the resolution of the data?
 - Are their missing values? How should they be handled?
 
+```{r message=FALSE}
+global_temp <- 
+read_table("https://data.giss.nasa.gov/gistemp/graphs/graph_data/Global_Mean_Estimates_based_on_Land_and_Ocean_Data/graph.txt", 
+            comment="#",
+           col_names = c("Year", "No_Smoothing", "Lowess(5)"),
+           na = c("Land-Ocean", "Year"))
+global_temp %>% na.omit()
+
+```
 
 ## Question 2:
 
 Construct the necessary R code to import and prepare for manipulation the following data set: <http://climate.nasa.gov/system/internal_resources/details/original/647_Global_Temperature_Data_File.txt>
 
-
+```{r message=FALSE}
+data <- 
+read_table("http://climate.nasa.gov/system/internal_resources/details/original/647_Global_Temperature_Data_File.txt", 
+            comment="#",
+           col_names = c("Year", "Annual_Mean", "Lowess_Smoothing"),
+           na = c("Land-Ocean", "Year"))
+data = data %>% na.omit()
+data %>% 
+  mutate_at(vars(Year, Annual_Mean, Lowess_Smoothing), double)
+```
 ## Question 3:
 
 Plot the trend in global mean temperatures over time.  Describe what you see in the plot and how you interpret the patterns you observe.
-
+```{r}
+ggplot(data, aes(Year, Annual_Mean, group = 1)) + geom_line() + scale_x_discrete(breaks = 1830)
+```
 
 ## Question 4: Evaluating the evidence for a "Pause" in warming?
 
